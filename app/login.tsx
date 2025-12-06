@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, Pressable, Image } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable, Image, Text } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 
 
-export default function SignUpPage() {
+export default function LoginPage() {
   const colorScheme = useColorScheme();
 
   const[email, setEmail] = useState('');
@@ -71,7 +71,7 @@ export default function SignUpPage() {
                 Remember Me
             </ThemedText>
             
-            <Link href='/'>
+            <Link href='/forgotpass' asChild>
                 <Pressable>
                     <ThemedText style={{ color: '#37c2e9ff'}}>
                         Forgot password?
