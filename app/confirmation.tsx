@@ -81,7 +81,7 @@ export default function Confirmation() {
         </ThemedText>
         
         <Pressable>
-            <ThemedText style={[ { color: '#379fe9ff', fontFamily: Fonts.rounded, fontWeight: 'bold' } ]}>Resend</ThemedText> 
+            <ThemedText style={[ { color: '#37c2e9ff', fontFamily: Fonts.rounded, fontWeight: 'bold' } ]}>Resend</ThemedText> 
         </Pressable>
         </ThemedView>
 

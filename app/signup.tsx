@@ -74,6 +74,16 @@ export default function SignUpPage() {
           </ThemedText>
         </Pressable>
       </View>
+
+      <ThemedView style={styles.resendText}>
+          <ThemedText style={[{ color:'#5865F2', fontFamily: Fonts.rounded, fontWeight: 'bold' }]}>
+            Already have an account?         
+          </ThemedText>
+              
+          <Pressable onPress={()=>{router.push('/login')}}>
+              <ThemedText style={[ { color: '#37c2e9ff', fontFamily: Fonts.rounded, fontWeight: 'bold' } ]}>Login</ThemedText> 
+          </Pressable>
+        </ThemedView>
     </ThemedView>
   );
 }
@@ -148,6 +158,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',  
     marginTop: 20,
     backgroundColor: '#5865F2',
+    marginBottom: 30
   },
   submitText: {
     color: '#fff',
@@ -159,6 +170,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.rounded,
     fontSize: 22,
     marginLeft: 20
+  },
+  resendText: {
+    flexDirection: 'row',
+    gap: 6
   },
   header: {
     width: '100%',
