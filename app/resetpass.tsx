@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 
 
-export default function ForgotPasswordPage() {
+export default function ResetPasswordPage() {
 
   return (
     <ThemedView style={styles.container}>
