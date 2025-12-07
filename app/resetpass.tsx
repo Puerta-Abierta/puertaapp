@@ -4,10 +4,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
 import { Link } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
-
 
 export default function ResetPasswordPage() {
 
@@ -88,8 +84,8 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     marginBottom: 30,
     marginTop: 50
   },

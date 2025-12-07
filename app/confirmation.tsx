@@ -2,7 +2,6 @@ import React from 'react';
 import { View, StyleSheet, TextInput, Pressable, Image } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { ExternalLink } from '@/components/external-link';
 import { Fonts } from '@/constants/theme';
 import { Link } from 'expo-router';
 import { useColorScheme } from 'react-native';
@@ -95,16 +94,12 @@ export default function Confirmation() {
 }
 
 const styles = StyleSheet.create( {
-    container: {
+  container: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 40,
     alignItems: 'center',
     
-  },
-  topBar: {
-    width: '100%',
-    marginBottom: 20,
   },
   backCircle: {
     width: 40,
@@ -153,9 +148,6 @@ const styles = StyleSheet.create( {
     fontFamily: Fonts.rounded,
     fontSize: 16,
     alignSelf: 'center'
-  },
-  buttonWrapper: {
-    marginTop: 10,
   },
   submitButton: {
     paddingVertical: 15,

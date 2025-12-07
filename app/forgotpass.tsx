@@ -108,10 +108,10 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
     marginBottom: 30,
-    marginTop: 50
+    marginTop: 20
   },
   form: {
     width: '100%',

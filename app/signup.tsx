@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, Pressable, Image } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable, Image, Alert } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
@@ -7,13 +7,24 @@ import { Link } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  webClientId: "647366167286-9nmlmk5gg3qroc55rd0jdokte5s7muur.apps.googleusercontent.com",
+  iosClientId: "647366167286-t82v2msoh3s4cft9bl6rjl208vspp3rs.apps.googleusercontent.com"
+})
 
 
 export default function SignUpPage() {
   const colorScheme = useColorScheme();
 
-  const[name, setName] = useState('');
-  const[email, setEmail] = useState('');
+  const[userInfo, setUserInfo] = useState<any>(null);
   const router = useRouter();
 
   const imageSource = 
@@ -23,9 +34,30 @@ export default function SignUpPage() {
   const placeholderColor = 
     colorScheme === 'dark' ? '#2f2d2dff' : '#f8f7f7ff';
 
-  const handleSubmit = () => {
-    if (name.trim() && email.trim()) {
-      router.push('/confirmation');
+  const handleSubmit = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      if (isSuccessResponse(response)) {
+        router.push('/confirmation')
+        setUserInfo(response.data);
+      } else {
+        console.log('sign in was cancelled by user')
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            Alert.alert('sign in is in progress')
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+          // Android only, play services not available or outdated
+            break;
+          default:
+        }
+      } else {
+      Alert.alert('an error not related to google sign in occurred')
+      }
     }
   }
 
@@ -55,8 +87,6 @@ export default function SignUpPage() {
           placeholder="Ex: Jane Doe"
           style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
           placeholderTextColor={placeholderColor}
-          value={name}
-          onChangeText={setName}
         />
         <ThemedText style={styles.label}>Email</ThemedText>
         <TextInput
@@ -64,8 +94,6 @@ export default function SignUpPage() {
           style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
           keyboardType="email-address"
           placeholderTextColor={placeholderColor}
-          value={email}
-          onChangeText={setEmail}
         />
 
         <Pressable style={styles.submitButton} onPress={handleSubmit}>
@@ -96,10 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     
   },
-  topBar: {
-    width: '100%',
-    marginBottom: 20,
-  },
+  
   backCircle: {
     width: 40,
     height: 40,
@@ -148,9 +173,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     alignSelf: 'center'
   },
-  buttonWrapper: {
-    marginTop: 10,
-  },
+  
   submitButton: {
     paddingVertical: 15,
     paddingHorizontal: 32,

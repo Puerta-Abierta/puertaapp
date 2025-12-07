@@ -2,7 +2,6 @@ import { Pressable, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { LinearGradient } from 'expo-linear-gradient'
-
 import { ThemedText } from '@/components/themed-text';
 import { Fonts } from '@/constants/theme';
 
