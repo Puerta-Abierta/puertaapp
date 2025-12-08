@@ -37,7 +37,7 @@ export default function LoginPage() {
       
 
       <Image
-        source={require('@/assets/images/Welcome-cuate 1.png')} // replace with your image
+        source={require('@/assets/images/login-image.png')} // replace with your image
         style={styles.image}
         resizeMode="contain"
       />
@@ -102,13 +102,13 @@ export default function LoginPage() {
         </ThemedView>
     <View style={styles.bottomButtons}>
         <Pressable style={styles.circleButton}>
-            <Image source={require('@/assets/images/Vector.png')} resizeMode='contain'/>
+            <Image source={require('@/assets/images/google.png')} resizeMode='contain'/>
         </Pressable>
         <Pressable style={styles.circleButton}>
-            <Image source={require('@/assets/images/Vector (1).png')} resizeMode='contain'/>
+            <Image source={require('@/assets/images/phone.png')} resizeMode='contain'/>
         </Pressable>
         <Pressable style={styles.circleButton}>
-            <Image source={require('@/assets/images/Vector (2).png')} resizeMode='contain'/>
+            <Image source={require('@/assets/images/fb.png')} resizeMode='contain'/>
         </Pressable>
     </View>
         

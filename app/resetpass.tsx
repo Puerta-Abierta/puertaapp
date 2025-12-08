@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
       
 
       <Image
-        source={require('@/assets/images/temp check.png')} // replace with your image
+        source={require('@/assets/images/check.png')} // replace with your image
         style={styles.image}
         resizeMode="contain"
       />

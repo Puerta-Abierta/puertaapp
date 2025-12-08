@@ -49,7 +49,7 @@ export default function Confirmation() {
           
     
           <Image
-            source={require('@/assets/images/Mobile inbox-cuate (1) 1.png')} // replace with your image
+            source={require('@/assets/images/confirmation-image.png')} // replace with your image
             style={styles.image}
             resizeMode="contain" 
           />

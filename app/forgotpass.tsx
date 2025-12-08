@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
       
 
       <Image
-        source={require('@/assets/images/FP graphic.png')} // replace with your image
+        source={require('@/assets/images/forgot-password-image.png')} // replace with your image
         style={styles.image}
         resizeMode="contain"
       />
