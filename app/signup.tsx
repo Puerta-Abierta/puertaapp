@@ -4,25 +4,18 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
 import { Link } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, ScrollView, Platform } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  isErrorWithCode,
-  isSuccessResponse,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-
-GoogleSignin.configure({
-  webClientId: "647366167286-9nmlmk5gg3qroc55rd0jdokte5s7muur.apps.googleusercontent.com",
-  iosClientId: "647366167286-t82v2msoh3s4cft9bl6rjl208vspp3rs.apps.googleusercontent.com"
-})
+import GoogleButton from './googlebutton'
+import { isSuccessResponse } from '@react-native-google-signin/google-signin';
 
 
 export default function SignUpPage() {
   const colorScheme = useColorScheme();
+
+  const[name, setName] = useState("");
+  const[email, setEmail] = useState("");
 
   const[userInfo, setUserInfo] = useState<any>(null);
   const router = useRouter();
@@ -34,34 +27,16 @@ export default function SignUpPage() {
   const placeholderColor = 
     colorScheme === 'dark' ? '#2f2d2dff' : '#f8f7f7ff';
 
-  const handleSubmit = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        router.push('/confirmation')
-        setUserInfo(response.data);
-      } else {
-        console.log('sign in was cancelled by user')
-      }
-    } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.IN_PROGRESS:
-            Alert.alert('sign in is in progress')
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-          // Android only, play services not available or outdated
-            break;
-          default:
-        }
-      } else {
-      Alert.alert('an error not related to google sign in occurred')
-      }
+  const handleSubmit = () => {
+    if (name.trim() && email.trim()) {
+      router.push('/confirmation') // add actual backend authentication after if not a google sign in
     }
   }
 
+
   return (
+  
+   Platform.OS === 'web' ? (<ScrollView contentContainerStyle={{ padding: 20 }}>
     <ThemedView style={styles.container}>
     <View style={styles.header}>
       <Link href='/welcome' asChild>
@@ -86,6 +61,8 @@ export default function SignUpPage() {
         <TextInput
           placeholder="Ex: Jane Doe"
           style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
+          value={name}
+          onChangeText={setName}
           placeholderTextColor={placeholderColor}
         />
         <ThemedText style={styles.label}>Email</ThemedText>
@@ -93,6 +70,8 @@ export default function SignUpPage() {
           placeholder="Ex: opendoors@gmail.com"
           style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
           placeholderTextColor={placeholderColor}
         />
 
@@ -101,6 +80,22 @@ export default function SignUpPage() {
             Sign Up
           </ThemedText>
         </Pressable>
+
+        <GoogleButton
+          onSignIn={(response) => {
+            if (isSuccessResponse(response)) {
+              router.push('/confirmation');
+              setUserInfo(response.data);
+            } 
+            else if (response?.credential) {
+              console.log('Web user credential:', response.credential);
+              router.push('/confirmation');
+            } else {
+            console.log('sign in was cancelled by user');
+            }
+           }}
+        />
+
       </View>
 
       <ThemedView style={styles.resendText}>
@@ -113,7 +108,80 @@ export default function SignUpPage() {
           </Pressable>
         </ThemedView>
     </ThemedView>
-  );
+    </ScrollView>)
+   : (
+    <ThemedView style={styles.container}>
+    <View style={styles.header}>
+      <Link href='/welcome' asChild>
+        <Pressable style={styles.backCircle}>
+          <ThemedText style={styles.backArrow}>←</ThemedText>
+        </Pressable>
+      </Link>
+      <ThemedText type="title" style={styles.title}>
+        Sign Up
+      </ThemedText>
+    </View>  
+      
+
+      <Image
+        source={imageSource} // replace with your image
+        style={styles.image}
+        resizeMode="contain"
+      />
+
+      <View style={styles.form}>
+        <ThemedText style={styles.label}>Full Name</ThemedText>
+        <TextInput
+          placeholder="Ex: Jane Doe"
+          style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
+          value={name}
+          onChangeText={setName}
+          placeholderTextColor={placeholderColor}
+        />
+        <ThemedText style={styles.label}>Email</ThemedText>
+        <TextInput
+          placeholder="Ex: opendoors@gmail.com"
+          style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+          placeholderTextColor={placeholderColor}
+        />
+
+        <Pressable style={styles.submitButton} onPress={handleSubmit}>
+          <ThemedText type="defaultSemiBold" style={styles.submitText}>
+            Sign Up
+          </ThemedText>
+        </Pressable>
+
+        <GoogleButton
+          onSignIn={(response) => {
+            if (isSuccessResponse(response)) {
+              router.push('/confirmation');
+              setUserInfo(response.data);
+            } 
+            else if (response?.credential) {
+              console.log('Web user credential:', response.credential);
+              router.push('/confirmation');
+            } else {
+            console.log('sign in was cancelled by user');
+            }
+           }}
+        />
+
+      </View>
+
+      <ThemedView style={styles.resendText}>
+          <ThemedText style={[{ color:'#5865F2', fontFamily: Fonts.rounded, fontWeight: 'bold' }]}>
+            Already have an account?         
+          </ThemedText>
+              
+          <Pressable onPress={()=>{router.push('/login')}}>
+              <ThemedText style={[ { color: '#37c2e9ff', fontFamily: Fonts.rounded, fontWeight: 'bold' } ]}>Login</ThemedText> 
+          </Pressable>
+        </ThemedView>
+    </ThemedView>)
+  )
 }
 
 const styles = StyleSheet.create({
@@ -179,7 +247,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 30,
     alignSelf: 'center',  
-    marginTop: 20,
     backgroundColor: '#5865F2',
     marginBottom: 30
   },
