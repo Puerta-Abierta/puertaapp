@@ -1,12 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, TextInput, Pressable, Image, Text } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
-import { Link } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Image, Pressable, StyleSheet, TextInput, useColorScheme, View } from 'react-native';
+import GoogleButton from './googlebutton';
 
 
 export default function LoginPage() {
@@ -87,6 +85,10 @@ export default function LoginPage() {
             Login
           </ThemedText>
         </Pressable>
+
+        <View style={styles.googleButtonContainer}>
+          <GoogleButton buttonText="Sign in with Google" />
+        </View>
         </View>
 
 
@@ -101,9 +103,6 @@ export default function LoginPage() {
             </Pressable>
         </ThemedView>
     <View style={styles.bottomButtons}>
-        <Pressable style={styles.circleButton}>
-            <Image source={require('@/assets/images/google.png')} resizeMode='contain'/>
-        </Pressable>
         <Pressable style={styles.circleButton}>
             <Image source={require('@/assets/images/phone.png')} resizeMode='contain'/>
         </Pressable>
@@ -231,5 +230,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 18,
     marginRight: 8
+  },
+  googleButtonContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20
   }
 });

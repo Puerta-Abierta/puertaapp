@@ -1,3 +1,51 @@
-export { default } from './welcome';
+import { useAuth } from '@/contexts/AuthContext';
+import { Redirect } from 'expo-router';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+export default function Index() {
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#5865F2" />
+      </View>
+    );
+  }
+
+  if (isAuthenticated) {
+    // Check onboarding flow
+    if (user && !user.hasSelectedAvatar) {
+      return <Redirect href="/avatar-selection" />;
+    }
+    if (user && user.hasSelectedAvatar && !user.hasCompletedOnboarding) {
+      return <Redirect href="/onboarding" />;
+    }
+    return <Redirect href="/home" />;
+  }
+
+  return <Redirect href="/welcome" />;
+}
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

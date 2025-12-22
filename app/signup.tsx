@@ -1,14 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, TextInput, Pressable, Image, Alert } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
-import { Link } from 'expo-router';
-import { useColorScheme, ScrollView, Platform } from 'react-native';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
-import GoogleButton from './googlebutton'
-import { isSuccessResponse } from '@react-native-google-signin/google-signin';
+import { Link, useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Image, Platform, Pressable, ScrollView, StyleSheet, TextInput, useColorScheme, View } from 'react-native';
+import GoogleButton from './googlebutton';
 
 
 export default function SignUpPage() {
@@ -81,20 +77,7 @@ export default function SignUpPage() {
           </ThemedText>
         </Pressable>
 
-        <GoogleButton
-          onSignIn={(response) => {
-            if (isSuccessResponse(response)) {
-              router.push('/confirmation');
-              setUserInfo(response.data);
-            } 
-            else if (response?.credential) {
-              console.log('Web user credential:', response.credential);
-              router.push('/confirmation');
-            } else {
-            console.log('sign in was cancelled by user');
-            }
-           }}
-        />
+        <GoogleButton />
 
       </View>
 
@@ -154,20 +137,7 @@ export default function SignUpPage() {
           </ThemedText>
         </Pressable>
 
-        <GoogleButton
-          onSignIn={(response) => {
-            if (isSuccessResponse(response)) {
-              router.push('/confirmation');
-              setUserInfo(response.data);
-            } 
-            else if (response?.credential) {
-              console.log('Web user credential:', response.credential);
-              router.push('/confirmation');
-            } else {
-            console.log('sign in was cancelled by user');
-            }
-           }}
-        />
+        <GoogleButton />
 
       </View>
 
