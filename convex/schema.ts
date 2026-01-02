@@ -33,3 +33,5 @@ export default defineSchema({
     .index("by_google_id", ["googleId"])
     .index("by_email", ["email"]),
 });
+
+
