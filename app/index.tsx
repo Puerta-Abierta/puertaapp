@@ -1,9 +1,13 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { Redirect } from 'expo-router';
+import { usePathname, Redirect } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+
 export default function Index() {
+  const pathname = usePathname();
   const { isAuthenticated, isLoading, user } = useAuth();
+  console.log('index ran')
+  
 
   if (isLoading) {
     return (
@@ -12,8 +16,8 @@ export default function Index() {
       </View>
     );
   }
-
-  if (isAuthenticated) {
+  console.log(pathname)
+  if (isAuthenticated && pathname === "/") {
     // Check onboarding flow
     if (user && !user.hasSelectedAvatar) {
       return <Redirect href="/avatar-selection" />;
@@ -34,18 +38,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

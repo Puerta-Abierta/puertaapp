@@ -42,6 +42,7 @@ const ACHIEVEMENTS = [
 export default function HomePage() {
   const { user, signOut } = useAuth();
   const router = useRouter();
+  console.log('home rendered')
 
   // Get user stats with defaults
   const totalCoins = user?.totalCoins ?? 100;
@@ -72,7 +73,7 @@ export default function HomePage() {
   };
 
   const handleChooseAvatar = () => {
-    router.push('/avatar-selection');
+    router.replace(`/avatar-selection`);
   };
 
   return (

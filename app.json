@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.puertaapp"
+      "bundleIdentifier": "com.anonymous.puertaapp",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "FinC needs access to your photo library so you can upload a profile avatar."
+      }
     },
     "android": {
       "adaptiveIcon": {

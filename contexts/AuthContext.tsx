@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     checkAuthState();
   }, []);
+  console.log('authprovider')
 
   // Handle navigation based on auth state
   useEffect(() => {
@@ -79,7 +80,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                        segments[0] === 'resetpass' ||
                        segments[0] === 'confirmation' ||
                        segments[0] === 'avatar-selection' ||
-                       segments[0] === 'onboarding';
+                       segments[0] === 'onboarding' ||
+                       segments[0] === 'upload' ||
+                       segments[0] === 'third-party';
     const isAuthenticated = !!user && !!userId;
     const needsAvatar = user && !user.hasSelectedAvatar;
     const needsOnboarding = user && user.hasSelectedAvatar && !user.hasCompletedOnboarding;
@@ -87,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticated && !inAuthGroup) {
       // Redirect to welcome if not authenticated
       router.replace('/welcome');
-    } else if (isAuthenticated && inAuthGroup && segments[0] !== 'confirmation' && segments[0] !== 'avatar-selection' && segments[0] !== 'onboarding') {
+    } else if (isAuthenticated && inAuthGroup && segments[0] !== 'confirmation' && segments[0] !== 'avatar-selection' && segments[0] !== 'onboarding' && segments[0] !=='upload' && segments[0] !== 'third-party') {
       // Check onboarding flow
       if (needsAvatar && segments[0] !== 'avatar-selection') {
         router.replace('/avatar-selection');
