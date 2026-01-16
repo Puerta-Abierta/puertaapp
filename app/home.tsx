@@ -5,7 +5,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 // Achievement data
 const ACHIEVEMENTS = [
@@ -42,7 +44,13 @@ const ACHIEVEMENTS = [
 export default function HomePage() {
   const { user, signOut } = useAuth();
   const router = useRouter();
-  console.log('home rendered')
+  const avatarUrl = useQuery(
+  api.users.getImage,
+  (user as any)?.hasUploadedAvatar && (user as any)?.selectedAvatarPath
+    ? { storageId: (user as any).selectedAvatarPath }
+    : "skip"
+);
+
 
   // Get user stats with defaults
   const totalCoins = user?.totalCoins ?? 100;
@@ -107,7 +115,16 @@ export default function HomePage() {
           </View>
           <View style={styles.avatarContainer}>
             <View style={styles.avatarCircle}>
-              <ThemedText style={styles.avatarEmoji}>{getAvatarEmoji()}</ThemedText>
+              {(user as any)?.hasUploadedAvatar && avatarUrl ? (
+                  <Image
+                    source={{ uri: avatarUrl }}
+                    style={styles.avatarImage}
+                  />
+                    ) : (
+                  <ThemedText style={styles.avatarEmoji}>
+                      {getAvatarEmoji()}
+                  </ThemedText>
+              )}
             </View>
           </View>
         </View>
@@ -376,6 +393,11 @@ const styles = StyleSheet.create({
   navItemActive: {
     backgroundColor: '#5865F220',
     borderRadius: 8,
+  },
+  avatarImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 999,
   },
 });
 

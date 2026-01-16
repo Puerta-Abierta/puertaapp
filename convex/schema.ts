@@ -12,7 +12,9 @@ export default defineSchema({
     lastLogin: v.number(),
     // Avatar and profile
     selectedAvatar: v.optional(v.string()), // Avatar image path/name
+    selectedAvatarPath: v.optional(v.id("_storage")), // storage id for upload
     hasSelectedAvatar: v.optional(v.boolean()), // Track if user has selected avatar
+    hasUploadedAvatar: v.optional(v.boolean()), // for displaying purposes
     level: v.optional(v.string()), // e.g., "Radiant Level FinCer"
     // Stats
     totalCoins: v.optional(v.number()),

@@ -16,7 +16,6 @@ export default function Index() {
       </View>
     );
   }
-  console.log(pathname)
   if (isAuthenticated && pathname === "/") {
     // Check onboarding flow
     if (user && !user.hasSelectedAvatar) {

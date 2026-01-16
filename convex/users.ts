@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { action } from "./_generated/server"; 
+import { api } from "./_generated/api";
 
 // Query to get user by email
 export const getUserByEmail = query({
@@ -81,10 +83,35 @@ export const updateUserAvatar = mutation({
     await ctx.db.patch(args.userId, {
       selectedAvatar: args.avatar,
       hasSelectedAvatar: true,
+      hasUploadedAvatar: false
     });
     return await ctx.db.get(args.userId);
   },
 });
+
+export const replaceUserAvatar = mutation({
+  args: {
+    userId: v.id("users"),
+    newStorageId: v.id("_storage")
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.userId)
+    if (!user) return
+    
+    if (user.hasUploadedAvatar && user.selectedAvatarPath) {
+      await ctx.storage.delete(user.selectedAvatarPath)
+    }
+    await ctx.db.patch(args.userId, {
+      selectedAvatarPath: args.newStorageId,
+      hasSelectedAvatar: true,
+      hasUploadedAvatar: true
+    })
+  },
+});
+
+export const generateUploadUrl = mutation(async (ctx) => {
+  return await ctx.storage.generateUploadUrl()
+})
 
 // Mutation to sign out (clear token)
 export const signOut = mutation({
@@ -118,4 +145,75 @@ export const updateOnboardingData = mutation({
   },
 });
 
+export const getImage = query({
+  args: {
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.storage.getUrl(args.storageId)
+  }
+})
+
+export const importSnapBitmoji = action({
+  args: {
+    userId: v.id("users"),
+    code: v.string()
+  },
+  handler: async (ctx, args) => {
+    const clientId = process.env.SNAPCHAT_CLIENT_ID!;
+    const clientSecret = process.env.SNAPCHAT_CLIENT_SECRET!;
+    const redirectUri = process.env.SNAPCHAT_REDIRECT_URI!;
+  
+  
+  const tokenRes = await fetch(
+    "https://accounts.snapchat.com/accounts/oauth2/token",
+    {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code: args.code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+        }),
+    }
+  );
+
+  const tokenData = await tokenRes.json()
+  const accessToken = tokenData?.access_token;
+
+  if (!accessToken) {
+    alert("Failed to get Snap access token")
+  }
+
+  const avatarRes = await fetch(
+    "https://kit.snapchat.com/v1/me/bitmoji/avatar",
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  const avatarData = await avatarRes.json()
+  const avatarUrl = avatarData?.data?.avatar_url;
+
+  if (!avatarUrl) {
+    alert("No bitmoji avatar returned")
+  }
+
+  const imageRes = await fetch(avatarUrl)
+  const imageBuffer = await imageRes.arrayBuffer()
+  const blob = new Blob([imageBuffer], { type: 'image/png' })
+
+  const storageId = await ctx.storage.store(blob)
+
+  await ctx.runMutation(api.users.replaceUserAvatar, {
+    userId: args.userId,
+    newStorageId: storageId
+  })
+}
+})
 

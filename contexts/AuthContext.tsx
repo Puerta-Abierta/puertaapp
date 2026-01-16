@@ -74,11 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const inAuthGroup = segments[0] === '(auth)' || 
                        segments[0] === 'welcome' || 
-                       segments[0] === 'login' || 
                        segments[0] === 'signup' ||
-                       segments[0] === 'forgotpass' ||
-                       segments[0] === 'resetpass' ||
-                       segments[0] === 'confirmation' ||
                        segments[0] === 'avatar-selection' ||
                        segments[0] === 'onboarding' ||
                        segments[0] === 'upload' ||
@@ -150,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUserId(null);
       await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
-      router.replace('/login');
+      router.replace('/signup');
     } catch (error) {
       console.error('Error signing out:', error);
     }

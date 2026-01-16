@@ -2,23 +2,56 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts } from '@/constants/theme';
 import { useRouter, Link } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 import React from 'react';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View, Image } from 'react-native';
+import { useMutation } from 'convex/react'
+import { api } from "@/convex/_generated/api";
+import { Pressable, StyleSheet, View, Image, Alert, Linking } from 'react-native';
 import * as ImagePicker from 'expo-image-picker'
 
 export default function UploadAvatar() {
+  const { user } = useAuth()
   const [imageUri, setImageUri] = useState<string | null>(null)
   const router = useRouter();
+  const generateUploadUrl = useMutation(api.users.generateUploadUrl)
+  const replaceUserAvatar = useMutation(api.users.replaceUserAvatar)
   
-  const handleSubmit = () => {
-    // add image saving logic
-    router.replace('/home')
   
+  const requestPhotoPermission = async () => {
+    const { status, canAskAgain } = await ImagePicker.getMediaLibraryPermissionsAsync()
+    if (status === 'granted') {
+      return true
+    }
+    if (!canAskAgain) {
+      Alert.alert(
+      'Photo Access Required',
+      'You previously denied photo access. Please enable it in Settings to upload an avatar.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Open Settings',
+          onPress: () => Linking.openSettings(),
+        },
+      ]
+    );
+    return false;
+    }
+
+    const result = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (result.status !== 'granted') {
+      Alert.alert(
+        'Permission Denied',
+        'Photo access is required to upload an avatar'
+      );
+      return false
+    }
+    return true
   }
+
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if (status !== 'granted') {
+    const permission = await requestPhotoPermission()
+    if (!user || !permission) {
       alert('Permission to access photos is required!')
       return;
     }
@@ -29,9 +62,42 @@ export default function UploadAvatar() {
       aspect: [1,1],
       quality: 0.8
     })
+    if (result.canceled) return
     
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri)
+    const asset = result.assets[0]
+    setImageUri(asset.uri)
+    
+    const response = await fetch(asset.uri)
+    const blob = await response.blob()
+
+    const uploadUrl = await generateUploadUrl()
+
+    const uploadRes = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": blob.type,
+      },
+      body: blob
+    })
+
+    if (!uploadRes.ok) {
+      alert("Upload failed")
+    }
+
+    const { storageId } = await uploadRes.json()
+
+    await replaceUserAvatar( {
+      userId: user._id,
+      newStorageId: storageId
+    })
+  }
+
+  const handleSubmit = () => {
+    if (!user?.hasCompletedOnboarding) {
+      router.push('/onboarding')
+    }
+    else {
+      router.push('/home')
     }
   }
 
@@ -100,16 +166,16 @@ export default function UploadAvatar() {
         Upload an image below
       </ThemedText>
 
-      <Pressable style={styles.libraryButton} onPress={pickImage}>
-        <ThemedText style={styles.libraryButtonText}>
-          Choose from library
-        </ThemedText>
-      </Pressable>
-    </>
-  )}
-</View>
+        <Pressable style={styles.libraryButton} onPress={pickImage}>
+          <ThemedText style={styles.libraryButtonText}>
+            Choose from library
+          </ThemedText>
+        </Pressable>
+            </>
+          )}
+        </View>
   
-        <Pressable style={styles.submitButton} onPress={handleSubmit}>
+        <Pressable style={styles.submitButton} disabled={!imageUri} onPress={handleSubmit}>
             <ThemedText type="defaultSemiBold" style={styles.submitText}>
                   Save Avatar
             </ThemedText>
@@ -259,6 +325,7 @@ export default function UploadAvatar() {
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20
   },
   uploadText: {
     fontSize: 18,

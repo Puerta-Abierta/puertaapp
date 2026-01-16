@@ -4,15 +4,58 @@ import { Fonts } from '@/constants/theme';
 import { useRouter, Link } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useAuth } from '@/contexts/AuthContext';
+import * as AuthSession from "expo-auth-session";
+import { useAction } from 'convex/react'
+import { api } from "@/convex/_generated/api";
 
-export default function UploadAvatar() {
+export default function ThirdPartyAvatar() {
   const router = useRouter();
-  console.log('upload rendered')
-  
-  const handleSubmit = () => {
-    router.replace('/home')
-  
+  const { user } = useAuth();
+  const importSnapBitmoji = useAction(api.users.importSnapBitmoji)
+
+  const discovery = {
+    authorizationEndpoint: "https://accounts.snapchat.com/login/oauth2/authorize",
+    tokenEndpoint: "https://accounts.snapchat.com/login/oauth2/token",
+  };
+
+  const redirectUri = AuthSession.makeRedirectUri({
+    scheme: "puertaapp",
+    path: "snapchat-auth"
+  })
+
+  console.log(redirectUri)
+
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: process.env.SNAPCHAT_CLIENT_ID!,
+      redirectUri: redirectUri,
+      responseType: "code",
+      scopes: ["bitmoji_avatar"],
+      extraParams: { prompt: "consent" },
+    },
+    discovery);
+
+
+
+  const handleBitmojiUpload = async () => {
+    if (!request || !user) return;
+
+    const result = await promptAsync()
+
+    if (result.type === 'success' && result.params.code) {
+      const authCode = result.params.code
+      await importSnapBitmoji({ userId: user._id, code: authCode})
+      console.log("snapchat bitmoji storage id saved")
+    } 
+
+    if (!user.hasCompletedOnboarding) {
+      router.push('/onboarding')
+    } else {
+      router.push('/home')
+    }
   }
+
 
   return (
       <ThemedView style={styles.container}>
@@ -61,12 +104,31 @@ export default function UploadAvatar() {
           </Pressable>
           
         </View>
-  
-        <Pressable style={styles.submitButton} onPress={handleSubmit}>
+        <ThemedText style={styles.subtitle}>
+                  Upload Your Character
+                </ThemedText>
+                 <ThemedText style={styles.subtitle}>
+                  Please respect our community guidelines when selecting a profile image
+                </ThemedText>
+
+         <Pressable style={styles.uploadButton} onPress={handleBitmojiUpload}>
             <ThemedText type="defaultSemiBold" style={styles.submitText}>
-                  Save Avatar
+                  Connect Bitmoji
             </ThemedText>
           </Pressable>
+
+           <Pressable style={styles.uploadButton} >
+            <ThemedText type="defaultSemiBold" style={styles.submitText}>
+                  Connect Meta Avatar
+            </ThemedText>
+          </Pressable>
+
+           <Pressable style={styles.uploadButton}>
+            <ThemedText type="defaultSemiBold" style={styles.submitText}>
+                  Connect Memoji
+            </ThemedText>
+          </Pressable>
+  
       </ThemedView>
   
       
@@ -182,9 +244,19 @@ export default function UploadAvatar() {
       borderRadius: 30,
       alignSelf: 'center',  
       backgroundColor: '#5865F2',
-      marginBottom: 60
+      marginTop: 50
     },
-    submitText: {
+
+  uploadButton: {
+      paddingVertical: 15,
+      paddingHorizontal: 40,
+      borderRadius: 30,
+      alignSelf: 'center',  
+      backgroundColor: '#3c993f',
+      marginBottom: 20,
+      marginTop: 20
+    },
+  submitText: {
       color: '#fff',
       fontSize: 18,
       fontFamily: Fonts.rounded,

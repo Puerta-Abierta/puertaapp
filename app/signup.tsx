@@ -23,12 +23,6 @@ export default function SignUpPage() {
   const placeholderColor = 
     colorScheme === 'dark' ? '#2f2d2dff' : '#f8f7f7ff';
 
-  const handleSubmit = () => {
-    if (name.trim() && email.trim()) {
-      router.push('/confirmation') // add actual backend authentication after if not a google sign in
-    }
-  }
-
 
   return (
   
@@ -53,43 +47,12 @@ export default function SignUpPage() {
       />
 
       <View style={styles.form}>
-        <ThemedText style={styles.label}>Full Name</ThemedText>
-        <TextInput
-          placeholder="Ex: Jane Doe"
-          style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
-          value={name}
-          onChangeText={setName}
-          placeholderTextColor={placeholderColor}
-        />
-        <ThemedText style={styles.label}>Email</ThemedText>
-        <TextInput
-          placeholder="Ex: opendoors@gmail.com"
-          style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-          placeholderTextColor={placeholderColor}
-        />
-
-        <Pressable style={styles.submitButton} onPress={handleSubmit}>
-          <ThemedText type="defaultSemiBold" style={styles.submitText}>
-            Sign Up
-          </ThemedText>
-        </Pressable>
 
         <GoogleButton />
 
       </View>
 
-      <ThemedView style={styles.resendText}>
-          <ThemedText style={[{ color:'#5865F2', fontFamily: Fonts.rounded, fontWeight: 'bold' }]}>
-            Already have an account?         
-          </ThemedText>
-              
-          <Pressable onPress={()=>{router.push('/login')}}>
-              <ThemedText style={[ { color: '#37c2e9ff', fontFamily: Fonts.rounded, fontWeight: 'bold' } ]}>Login</ThemedText> 
-          </Pressable>
-        </ThemedView>
+
     </ThemedView>
     </ScrollView>)
    : (
@@ -113,43 +76,13 @@ export default function SignUpPage() {
       />
 
       <View style={styles.form}>
-        <ThemedText style={styles.label}>Full Name</ThemedText>
-        <TextInput
-          placeholder="Ex: Jane Doe"
-          style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
-          value={name}
-          onChangeText={setName}
-          placeholderTextColor={placeholderColor}
-        />
-        <ThemedText style={styles.label}>Email</ThemedText>
-        <TextInput
-          placeholder="Ex: opendoors@gmail.com"
-          style={[styles.input, { backgroundColor: textboxColor, color: placeholderColor }]}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-          placeholderTextColor={placeholderColor}
-        />
-
-        <Pressable style={styles.submitButton} onPress={handleSubmit}>
-          <ThemedText type="defaultSemiBold" style={styles.submitText}>
-            Sign Up
-          </ThemedText>
-        </Pressable>
 
         <GoogleButton />
 
       </View>
 
-      <ThemedView style={styles.resendText}>
-          <ThemedText style={[{ color:'#5865F2', fontFamily: Fonts.rounded, fontWeight: 'bold' }]}>
-            Already have an account?         
-          </ThemedText>
-              
-          <Pressable onPress={()=>{router.push('/login')}}>
-              <ThemedText style={[ { color: '#37c2e9ff', fontFamily: Fonts.rounded, fontWeight: 'bold' } ]}>Login</ThemedText> 
-          </Pressable>
-        </ThemedView>
+      
+          
     </ThemedView>)
   )
 }
@@ -193,7 +126,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    marginBottom: 30,
+    marginBottom: 70,
     marginTop: 50
   },
   form: {
